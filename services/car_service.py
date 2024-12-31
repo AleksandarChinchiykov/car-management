@@ -41,6 +41,12 @@ def get_cars(db: Session,make: str = None,garage_name: str = None,from_year: int
     cars = query.all()
     return [ResponseCarDTO.from_orm(car) for car in cars]
 
+def get_car_by_id(db: Session, car_id: int) -> ResponseCarDTO:
+    car = db.query(Car).filter(Car.id == car_id).first()
+    if not car:
+        return None
+    return ResponseCarDTO.from_orm(car)
+
 
 def update_car(db: Session, car_id: int, car_data: UpdateCarDTO) -> ResponseCarDTO:
     car = db.query(Car).filter(Car.id == car_id).first()

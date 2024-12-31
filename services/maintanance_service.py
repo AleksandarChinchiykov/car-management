@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
-
+from datetime import date
 from dtos.car_dto import ResponseCarDTO
 from dtos.garage_dto import ResponseGarageDTO
 from database.models import Maintenance, Car, Garage
@@ -119,35 +119,47 @@ def delete_maintenance(db: Session, maintenance_id: int) -> None:
     except ValidationError as e:
         raise HTTPException(status_code=400, detail="Bad request")
 
-def get_all_maintenances(db: Session) -> list[ResponseMaintenanceDTO]:
-    try:
-        maintenances = db.query(Maintenance).all()
-        if not maintenances:
-            raise HTTPException(status_code=404, detail="No maintenances found")
+def get_all_maintenances(db: Session,car_id: int,garage_id: int,start_date: date,end_date: date) -> ResponseMaintenanceDTO:
+    query = db.query(Maintenance)
 
-        response = []
-        for maintenance in maintenances:
-            car = db.query(Car).filter(Car.id == maintenance.car_id).first()
-            garage = db.query(Garage).filter(Garage.id == maintenance.garage_id).first()
+    if car_id:
+        query = query.filter(Maintenance.car_id == car_id)
 
-            if not car or not garage:
-                raise HTTPException(status_code=404, detail=f"Car or Garage not found for maintenance ID {maintenance.id}")
+    if garage_id:
+        query = query.filter(Maintenance.garage_id == garage_id)
 
-            car_name = f"{car.make} {car.model}"
+    if start_date:
+        query = query.filter(Maintenance.scheduledDate >= start_date)
 
-            response.append(ResponseMaintenanceDTO(
-                id=maintenance.id,
-                carId=maintenance.car_id,
-                carName=car_name,
-                serviceType=maintenance.serviceType,
-                scheduledDate=maintenance.scheduledDate,
-                garageId=maintenance.garage_id,
-                garageName=garage.name
-            ))
+    if end_date:
+        query = query.filter(Maintenance.scheduledDate <= end_date)
 
-        return response
-    except ValidationError as e:
-        raise HTTPException(status_code=400, detail="Bad request")
+    maintenances = query.all()
+    if not maintenances:
+        raise HTTPException(status_code=404, detail="No maintenances found")
+
+    response = []
+    for maintenance in maintenances:
+        car = db.query(Car).filter(Car.id == maintenance.car_id).first()
+        garage = db.query(Garage).filter(Garage.id == maintenance.garage_id).first()
+
+        if not car or not garage:
+            raise HTTPException(status_code=404, detail=f"Car or Garage not found for maintenance ID {maintenance.id}")
+
+        car_name = f"{car.make} {car.model}"
+
+        maintenance_response = ResponseMaintenanceDTO(
+            id=maintenance.id,
+            carId=maintenance.car_id,
+            carName=car_name,
+            serviceType=maintenance.serviceType,
+            scheduledDate=maintenance.scheduledDate,
+            garageId=maintenance.garage_id,
+            garageName=garage.name
+        )
+        response.append(maintenance_response)
+
+    return response
 
 def delete_all_maintenances(db: Session) -> None:
     try:
