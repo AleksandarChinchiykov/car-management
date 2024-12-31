@@ -2,6 +2,17 @@ from datetime import date
 from pydantic import BaseModel, Field
 
 
+class YearMonth(BaseModel):
+    year:int = Field(None)
+    month:str = Field(None)
+    leapYear:bool = Field(None)
+    monthValue:int = Field(None)
+
+
+class MonthlyRequestsReportDTO(BaseModel):
+     yearMonth:YearMonth= Field(None)
+     requests:int = Field(None)
+
 class CreateMaintenanceDTO(BaseModel):
     garageId: int
     carId: int

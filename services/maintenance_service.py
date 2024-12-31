@@ -1,11 +1,16 @@
+from calendar import isleap
 from fastapi import HTTPException
 from pydantic import ValidationError
+from sqlalchemy import func
+from typing import List
 from sqlalchemy.orm import Session
-from datetime import date
+from datetime import date,datetime,timedelta
 from dtos.car_dto import ResponseCarDTO
 from dtos.garage_dto import ResponseGarageDTO
 from database.models import Maintenance, Car, Garage
-from dtos.maintenance_dto import CreateMaintenanceDTO,UpdateMaintenanceDTO,ResponseMaintenanceDTO
+from dtos.maintenance_dto import CreateMaintenanceDTO, UpdateMaintenanceDTO, ResponseMaintenanceDTO, \
+    MonthlyRequestsReportDTO, YearMonth
+
 
 def create_maintenance(db: Session, maintenance_data: CreateMaintenanceDTO) -> ResponseMaintenanceDTO:
     try:
@@ -119,14 +124,14 @@ def delete_maintenance(db: Session, maintenance_id: int) -> None:
     except ValidationError as e:
         raise HTTPException(status_code=400, detail="Bad request")
 
-def get_all_maintenances(db: Session,car_id: int,garage_id: int,start_date: date,end_date: date) -> ResponseMaintenanceDTO:
+def get_all_maintenances(db: Session, carId: int, garageId: int, start_date: date, end_date: date) -> ResponseMaintenanceDTO:
     query = db.query(Maintenance)
 
-    if car_id:
-        query = query.filter(Maintenance.car_id == car_id)
+    if carId:
+        query = query.filter(Maintenance.car_id == carId)
 
-    if garage_id:
-        query = query.filter(Maintenance.garage_id == garage_id)
+    if garageId:
+        query = query.filter(Maintenance.garage_id == garageId)
 
     if start_date:
         query = query.filter(Maintenance.scheduledDate >= start_date)
@@ -161,6 +166,8 @@ def get_all_maintenances(db: Session,car_id: int,garage_id: int,start_date: date
 
     return response
 
+
+
 def delete_all_maintenances(db: Session) -> None:
     try:
         db.query(Maintenance).delete()
@@ -169,3 +176,54 @@ def delete_all_maintenances(db: Session) -> None:
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=f"Error deleting maintenances: {str(e)}")
+
+
+async def get_maintenance_monthly_requests_report(
+        db: Session,
+        garageId: int,
+        startMonth: str,
+        endMonth: str
+) -> List[MonthlyRequestsReportDTO]:
+    start_month_dt = datetime.strptime(startMonth, "%Y-%m").date()
+    end_month_dt = (datetime.strptime(endMonth, "%Y-%m") + timedelta(days=31)).replace(day=1) - timedelta(days=1)
+    end_month_dt = end_month_dt.date()
+
+    if start_month_dt > end_month_dt:
+        raise ValueError("Start date cannot be later than end date.")
+
+    months_in_range = []
+    current_date = start_month_dt
+    while current_date <= end_month_dt:
+        months_in_range.append(current_date)
+        if current_date.month == 12:
+            current_date = current_date.replace(year=current_date.year + 1, month=1)
+        else:
+            current_date = current_date.replace(month=current_date.month + 1)
+
+    query = db.query(
+        func.strftime('%Y-%m', Maintenance.scheduledDate).label('yearMonth'),
+        func.count(Maintenance.id).label('requests')
+    ).group_by(func.strftime('%Y-%m', Maintenance.scheduledDate))
+
+    query = query.filter(Maintenance.garage_id == garageId)
+    query = query.filter(Maintenance.scheduledDate >= start_month_dt)
+    query = query.filter(Maintenance.scheduledDate <= end_month_dt)
+
+    grouped_data = query.all()
+
+    report = []
+    for month in months_in_range:
+        month_str = month.strftime('%Y-%m')
+        requests = next((item for item in grouped_data if item.yearMonth == month_str), None)
+
+        report.append(MonthlyRequestsReportDTO(
+            yearMonth=YearMonth(
+                year=month.year,
+                month=month.strftime("%B").upper(),
+                leapYear=isleap(month.year),
+                monthValue=month.month
+            ),
+            requests=requests.requests if requests else 0
+        ))
+
+    return report
