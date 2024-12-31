@@ -7,12 +7,12 @@ from services.garage_service import create_garage, get_garages, update_garage, d
 router = APIRouter(prefix="/garages", tags=["Garages"])
 
 
-@router.post("/", response_model=ResponseGarageDTO)
+@router.post("", response_model=ResponseGarageDTO)
 def create_garage_endpoint(garage_data: CreateGarageDTO, db: Session = Depends(get_db_session)):
     return create_garage(db, garage_data)
 
 
-@router.get("/", response_model=list[ResponseGarageDTO])
+@router.get("", response_model=list[ResponseGarageDTO])
 def get_garages_endpoint(city: str = None, db: Session = Depends(get_db_session)):
     return get_garages(db, city)
 

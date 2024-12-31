@@ -2,13 +2,13 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from database.database import get_db_session
 from datetime import date
-from services.maintanance_service import create_maintenance, get_maintenance_by_id, update_maintenance, \
+from services.maintenance_service import create_maintenance, get_maintenance_by_id, update_maintenance, \
     delete_maintenance, get_all_maintenances, delete_all_maintenances
-from dtos.maintanance_dto import CreateMaintenanceDTO, UpdateMaintenanceDTO, ResponseMaintenanceDTO
+from dtos.maintenance_dto import CreateMaintenanceDTO, UpdateMaintenanceDTO, ResponseMaintenanceDTO
 
-router = APIRouter(prefix="/maintenances", tags=["Maintenances"])
+router = APIRouter(prefix="/maintenance", tags=["Maintenances"])
 
-@router.post("/", response_model=ResponseMaintenanceDTO)
+@router.post("", response_model=ResponseMaintenanceDTO)
 def create(maintenance_data: CreateMaintenanceDTO, db: Session = Depends(get_db_session)):
     return create_maintenance(db, maintenance_data)
 
@@ -16,7 +16,7 @@ def create(maintenance_data: CreateMaintenanceDTO, db: Session = Depends(get_db_
 def get_by_id(id: int, db: Session = Depends(get_db_session)):
     return get_maintenance_by_id(db, id)
 
-@router.get("/", response_model=list[ResponseMaintenanceDTO])
+@router.get("", response_model=list[ResponseMaintenanceDTO])
 def get_maintenances(
     db: Session = Depends(get_db_session),
     car_id: int = None,

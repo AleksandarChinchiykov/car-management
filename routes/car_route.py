@@ -7,12 +7,12 @@ from services.car_service import create_car, get_cars, update_car, delete_car,ge
 router = APIRouter(prefix="/cars", tags=["Cars"])
 
 
-@router.post("/", response_model=ResponseCarDTO)
+@router.post("", response_model=ResponseCarDTO)
 def create_car_endpoint(car_data: CreateCarDTO, db: Session = Depends(get_db_session)):
     return create_car(db, car_data)
 
 
-@router.get("/", response_model=list[ResponseCarDTO])
+@router.get("", response_model=list[ResponseCarDTO])
 def get_cars_endpoint(make: str = None, garage: str = None, from_year: int = None, to_year: int = None, db: Session = Depends(get_db_session)):
     return get_cars(db, make, garage, from_year, to_year)
 

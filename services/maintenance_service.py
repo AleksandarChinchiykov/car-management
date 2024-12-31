@@ -5,7 +5,7 @@ from datetime import date
 from dtos.car_dto import ResponseCarDTO
 from dtos.garage_dto import ResponseGarageDTO
 from database.models import Maintenance, Car, Garage
-from dtos.maintanance_dto import CreateMaintenanceDTO,UpdateMaintenanceDTO,ResponseMaintenanceDTO
+from dtos.maintenance_dto import CreateMaintenanceDTO,UpdateMaintenanceDTO,ResponseMaintenanceDTO
 
 def create_maintenance(db: Session, maintenance_data: CreateMaintenanceDTO) -> ResponseMaintenanceDTO:
     try:

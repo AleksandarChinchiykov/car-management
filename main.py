@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.car_route import router as car_router
 from routes.garage_route import router as garage_router
-from routes.maintance_route import router as maintenance_router
+from routes.maintenance_route import router as maintenance_router
 from database.models import Base
 from database.database import engine
 
