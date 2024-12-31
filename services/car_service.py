@@ -2,6 +2,11 @@ from sqlalchemy.orm import Session
 from typing import List
 from database.models import Car
 from dtos.car_dto import CreateCarDTO, UpdateCarDTO, ResponseCarDTO
+from sqlalchemy.orm import Session
+from typing import List
+from database.models import Car, Garage
+from dtos.car_dto import ResponseCarDTO
+
 
 
 def create_car(db: Session, car_data: CreateCarDTO) -> ResponseCarDTO:
@@ -17,29 +22,23 @@ def create_car(db: Session, car_data: CreateCarDTO) -> ResponseCarDTO:
     return ResponseCarDTO.from_orm(new_car)
 
 
-from sqlalchemy.orm import Session
-from typing import List
-from database.models import Car, Garage
-from dtos.car_dto import ResponseCarDTO
-
-
-def get_cars(db: Session,make: str = None,garage_name: str = None,from_year: int = None,to_year: int = None) -> List[ResponseCarDTO]:
+def get_cars(db: Session, carMake: str = None, garageId: int = None, fromYear: int = None, toYear: int = None) -> List[ResponseCarDTO]:
     query = db.query(Car)
-
-    if make:
-        query = query.filter(Car.make.ilike(f"%{make}%"))
-
-    if garage_name:
-        query = query.join(Car.garages).filter(Garage.name.ilike(f"%{garage_name}%"))
-
-    if from_year:
-        query = query.filter(Car.productionYear >= from_year)
-
-    if to_year:
-        query = query.filter(Car.productionYear <= to_year)
-
+    if carMake:
+        query = query.filter(Car.make.ilike(f"%{carMake}%"))
+    if garageId:
+        query = query.join(Car.garages).filter(Garage.id == garageId)
+    if fromYear:
+        query = query.filter(Car.productionYear >= int(fromYear))
+    if toYear:
+        query = query.filter(Car.productionYear <= int(toYear))
     cars = query.all()
+
     return [ResponseCarDTO.from_orm(car) for car in cars]
+
+
+
+
 
 def get_car_by_id(db: Session, car_id: int) -> ResponseCarDTO:
     car = db.query(Car).filter(Car.id == car_id).first()

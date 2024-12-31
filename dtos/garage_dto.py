@@ -25,3 +25,11 @@ class UpdateGarageDTO(BaseModel):
     city: str = Field(None)
     capacity: int = Field(None)
 
+class GarageDailyAvailabilityReportDTO(BaseModel):
+    date: date
+    requests: int
+    availableCapacity: int
+
+    class Config:
+        from_attributes = True
+

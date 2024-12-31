@@ -13,8 +13,15 @@ def create_car_endpoint(car_data: CreateCarDTO, db: Session = Depends(get_db_ses
 
 
 @router.get("", response_model=list[ResponseCarDTO])
-def get_cars_endpoint(make: str = None, garage: str = None, from_year: int = None, to_year: int = None, db: Session = Depends(get_db_session)):
-    return get_cars(db, make, garage, from_year, to_year)
+def get_cars_endpoint(
+    carMake: str = None,
+    garageId: int = None,
+    fromYear: int = None,
+    toYear: int = None,
+    db: Session = Depends(get_db_session)
+):
+    return get_cars(db, carMake=carMake, garageId=garageId, fromYear=fromYear, toYear=toYear)
+
 
 @router.get("/{car_id}", response_model=ResponseCarDTO)
 def get_car_by_id_endpoint(car_id: int, db: Session = Depends(get_db_session)):
