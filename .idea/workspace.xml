@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eff72e76-cb63-4aa1-9a8b-06625ba5ffcb" name="Changes" comment="Added services,models,database,dtos,routes for car" />
+    <list default="true" id="eff72e76-cb63-4aa1-9a8b-06625ba5ffcb" name="Changes" comment="Added services,models,database,dtos,routes for car">
+      <change beforePath="$PROJECT_DIR$/alembic.ini" beforeDir="false" afterPath="$PROJECT_DIR$/alembic.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/carmanagement.db" beforeDir="false" afterPath="$PROJECT_DIR$/carmanagement.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/env.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,7 +23,20 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="MIXED" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "AleksandarChinchiykov"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/AleksandarChinchiykov/car-management.git",
+    "accountId": "7cb0ae36-d1ea-44e1-99d8-8a6c31eb4b44"
+  }
+}]]></component>
   <component name="ProjectColorInfo"><![CDATA[{
   "associatedIndex": 4
 }]]></component>
@@ -59,7 +76,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1735598496504</updated>
-      <workItem from="1735598497635" duration="1701000" />
+      <workItem from="1735598497635" duration="5217000" />
     </task>
     <task id="LOCAL-00001" summary="Added services,models,database,dtos,routes for car">
       <option name="closed" value="true" />

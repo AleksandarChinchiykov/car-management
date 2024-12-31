@@ -17,14 +17,27 @@ def create_car(db: Session, car_data: CreateCarDTO) -> ResponseCarDTO:
     return ResponseCarDTO.from_orm(new_car)
 
 
-def get_cars(db: Session, make: str = None, from_year: int = None, to_year: int = None) -> List[ResponseCarDTO]:
+from sqlalchemy.orm import Session
+from typing import List
+from database.models import Car, Garage
+from dtos.car_dto import ResponseCarDTO
+
+
+def get_cars(db: Session,make: str = None,garage_name: str = None,from_year: int = None,to_year: int = None) -> List[ResponseCarDTO]:
     query = db.query(Car)
+
     if make:
         query = query.filter(Car.make.ilike(f"%{make}%"))
+
+    if garage_name:
+        query = query.join(Car.garages).filter(Garage.name.ilike(f"%{garage_name}%"))
+
     if from_year:
         query = query.filter(Car.productionYear >= from_year)
+
     if to_year:
         query = query.filter(Car.productionYear <= to_year)
+
     cars = query.all()
     return [ResponseCarDTO.from_orm(car) for car in cars]
 

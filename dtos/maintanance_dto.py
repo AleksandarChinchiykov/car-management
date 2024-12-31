@@ -22,3 +22,6 @@ class ResponseMaintenanceDTO(BaseModel):
      scheduledDate:date = Field(None)
      garageId:int = Field(None)
      garageName:str = Field(None)
+
+     class Config:
+         from_attributes = True

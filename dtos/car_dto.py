@@ -24,3 +24,6 @@ class ResponseCarDTO(BaseModel):
     productionYear: int = Field(None)
     licensePlate:str = Field(None)
     garages:list[ResponseGarageDTO] = Field(None)
+
+    class Config:
+        from_attributes = True

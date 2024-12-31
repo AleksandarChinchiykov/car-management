@@ -10,6 +10,9 @@ class ResponseGarageDTO(BaseModel):
     city: str
     capacity: int
 
+    class Config:
+        from_attributes = True
+
 class CreateGarageDTO(BaseModel):
     name:str
     location:str
@@ -21,3 +24,4 @@ class UpdateGarageDTO(BaseModel):
     location: str = Field(None)
     city: str = Field(None)
     capacity: int = Field(None)
+
