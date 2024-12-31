@@ -21,8 +21,3 @@ class UpdateGarageDTO(BaseModel):
     location: str = Field(None)
     city: str = Field(None)
     capacity: int = Field(None)
-
-class GarageDailyAvailabilityReportDTO(BaseModel):
-    reportDate:date = Field(None, alias="date")
-    requests: int = Field(None)
-    availableCapacity:int = Field(None)
